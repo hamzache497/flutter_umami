@@ -13,6 +13,8 @@ A lightweight Flutter package for [Umami](https://umami.is) analytics with **non
 - 🔥 **Fire-and-forget tracking** — `trackScreen` and `trackEvent` never block the UI thread.
 - 🖥️ **Multi-platform** — Supports Android, iOS, macOS, and Windows.
 - 🪵 **Optional debug logging** — Enable verbose logs during development with a single flag.
+- ⚠️ **Error monitoring** — Optional `onError` callback for production health checks.
+- 🌐 **Configurable User-Agent** — Override the default browser UA string if needed.
 
 ## Getting Started
 
@@ -60,6 +62,7 @@ void main() {
     serverUrl: 'https://your-umami.example.com',
     hostname: 'myapp',
     enableLogging: true, // optional, prints debug logs
+    onError: (e) => debugPrint('Analytics error: $e'), // optional
   );
 
   runApp(MyApp());
@@ -87,6 +90,22 @@ UmamiAnalytics.trackEvent('purchase', data: {'plan': 'pro', 'price': 9.99});
 | `UmamiAnalytics.init(...)`                                 | Starts background device-info collection and prepares the HTTP client. Returns immediately. |
 | `UmamiAnalytics.trackScreen(String screenName)`            | Sends a page-view event for the given screen name.                                          |
 | `UmamiAnalytics.trackEvent(String eventName, {Map? data})` | Sends a custom event with an optional data payload.                                         |
+| `UmamiAnalytics.reset()`                                   | Resets internal state, allowing `init()` to be called again. Primarily for testing.         |
+| `UmamiAnalytics.isInitialized`                             | Whether `init()` has been called and hasn't failed.                                         |
+| `DeviceIdService.getId()`                                  | Returns the persistent device ID (also accessible independently).                           |
+
+### `init()` Parameters
+
+| Parameter       | Required | Description                                    |
+| --------------- | -------- | ---------------------------------------------- |
+| `websiteId`     | ✅       | Website ID from your Umami dashboard.          |
+| `serverUrl`     | ✅       | Base URL of your Umami instance.               |
+| `hostname`      | ✅       | Logical hostname for this app.                 |
+| `enableLogging` | ❌       | Print debug logs to console. Default: `false`. |
+| `onError`       | ❌       | Callback invoked on init or send failures.     |
+| `userAgent`     | ❌       | Custom User-Agent string override.             |
+
+> **Supported platforms:** Android, iOS, macOS, Windows. Flutter Web is **not** supported (the package uses `dart:io`).
 
 ## Architecture
 

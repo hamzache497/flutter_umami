@@ -17,6 +17,7 @@
 /// UmamiAnalytics.trackScreen('HomeScreen');
 /// UmamiAnalytics.trackEvent('purchase', data: {'plan': 'pro'});
 /// ```
-library umami_flutter;
+library;
 
 export 'src/umami_analytics.dart';
+export 'src/device_id_service.dart' show DeviceIdService;

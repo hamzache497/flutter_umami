@@ -8,24 +8,44 @@ import 'package:umami_flutter/src/device_info.dart';
 /// Low-level HTTP client that sends events to the Umami `/api/send` endpoint.
 ///
 /// All sends are fire-and-forget so callers are never blocked on network I/O.
+///
+/// A single [IOClient] is reused across all requests for connection pooling.
 class UmamiClient {
   final String _serverUrl;
   final String _websiteId;
   final String _hostname;
   final DeviceInfo _deviceInfo;
   final void Function(String message)? _log;
+  final void Function(Object error)? _onError;
+  final String _userAgent;
+  final IOClient _client;
 
+  /// Creates an [UmamiClient] that sends events to [serverUrl].
+  ///
+  /// - [serverUrl]: Base URL of the Umami instance (no trailing slash).
+  /// - [websiteId]: The website ID from the Umami dashboard.
+  /// - [hostname]: Logical hostname for this app.
+  /// - [deviceInfo]: Pre-collected device metadata.
+  /// - [log]: Optional debug logger.
+  /// - [onError]: Optional error callback for monitoring.
+  /// - [userAgent]: Custom User-Agent string. If `null`, a platform-appropriate
+  ///   browser UA is used so Umami can recognise the OS.
   UmamiClient({
     required String serverUrl,
     required String websiteId,
     required String hostname,
     required DeviceInfo deviceInfo,
     void Function(String message)? log,
+    void Function(Object error)? onError,
+    String? userAgent,
   }) : _serverUrl = serverUrl,
        _websiteId = websiteId,
        _hostname = hostname,
        _deviceInfo = deviceInfo,
-       _log = log;
+       _log = log,
+       _onError = onError,
+       _userAgent = userAgent ?? _defaultUserAgent(),
+       _client = IOClient(HttpClient()..userAgent = null);
 
   /// Track a screen (page) view.
   void trackScreen(String screenName) {
@@ -64,11 +84,7 @@ class UmamiClient {
 
     final body = jsonEncode({'type': 'event', 'payload': payload});
 
-    // Use IOClient with userAgent disabled so Dart doesn't override our header
-    final ioClient = HttpClient()..userAgent = null;
-    final client = IOClient(ioClient);
-
-    client
+    _client
         .post(
           endpoint,
           headers: {
@@ -79,16 +95,18 @@ class UmamiClient {
         )
         .then((_) {
           _log?.call('[UmamiFlutter] Sent: $title');
-          client.close();
         })
         .catchError((Object e) {
           _log?.call('[UmamiFlutter] Failed: $e');
-          client.close();
+          _onError?.call(e);
         });
   }
 
   /// Platform-aware User-Agent so Umami recognises the OS.
-  String get _userAgent {
+  ///
+  /// Uses realistic browser UA strings because Umami parses the User-Agent
+  /// header to populate OS / browser / device-type fields.
+  static String _defaultUserAgent() {
     if (Platform.isAndroid) {
       return 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 '
           '(KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36';
