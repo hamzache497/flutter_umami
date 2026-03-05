@@ -1,3 +1,7 @@
+## 0.1.3
+
+- Widened dependency version constraints to reduce conflicts with host apps.
+
 ## 0.1.2
 
 - Upgraded `device_info_plus` from ^11.5.0 to ^12.3.0.
