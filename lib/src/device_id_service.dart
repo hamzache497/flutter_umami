@@ -14,7 +14,6 @@ class DeviceIdService {
   static const _storageKey = 'umami_persistent_device_id';
   static const _storage = FlutterSecureStorage(
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
   );
   static final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
   static final Uuid _uuid = Uuid();

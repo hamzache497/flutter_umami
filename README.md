@@ -1,9 +1,31 @@
 # umami_flutter
 
-A lightweight Flutter package for [Umami](https://umami.is) analytics with **non-blocking initialization** and **automatic device info collection**.
+A lightweight, privacy-focused Flutter analytics package powered by [Umami](https://umami.is) — the open-source alternative to Google Analytics and Firebase Analytics.
 
+Track screen views, custom events, and user engagement in your Flutter app **without sending data to Google**. Self-host your analytics, own your data, and stay GDPR-compliant.
+
+[![pub package](https://img.shields.io/pub/v/umami_flutter.svg)](https://pub.dev/packages/umami_flutter)
 [![Dart](https://img.shields.io/badge/Dart-%5E3.7.2-blue)](https://dart.dev)
 [![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.10.0-02569B)](https://flutter.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Why umami_flutter over Firebase Analytics?
+
+|                              | **umami_flutter**                              | **Firebase Analytics**                              |
+| ---------------------------- | ---------------------------------------------- | --------------------------------------------------- |
+| **Privacy**                  | ✅ Self-hosted — data never leaves your server | ❌ Data sent to Google servers                      |
+| **GDPR compliance**          | ✅ No cookie banners needed, no PII collected  | ⚠️ Requires consent banners and DPA                 |
+| **Setup complexity**         | ✅ 3 lines of code, no `google-services.json`  | ❌ Platform config files, Firebase console setup    |
+| **Package size**             | ✅ ~9 KB compressed                            | ❌ Firebase core + analytics = significantly larger |
+| **Dependencies**             | ✅ Minimal (5 packages)                        | ❌ Heavy dependency tree (Firebase SDK)             |
+| **Cost**                     | ✅ Free & open-source (self-hosted)            | ⚠️ Free tier with limits, then paid                 |
+| **Data ownership**           | ✅ 100% yours on your own server               | ❌ Stored on Google infrastructure                  |
+| **Real-time dashboard**      | ✅ Built-in Umami dashboard                    | ✅ Firebase console                                 |
+| **No Google account needed** | ✅                                             | ❌                                                  |
+| **Offline queuing**          | ❌ Events dropped offline                      | ✅ Built-in offline support                         |
+| **User identity tracking**   | ❌ Privacy-first, no user profiles             | ✅ User properties and audiences                    |
+
+**Best for:** Indie developers, privacy-conscious apps, apps targeting EU markets, and teams that want simple analytics without vendor lock-in.
 
 ## Features
 
@@ -12,6 +34,7 @@ A lightweight Flutter package for [Umami](https://umami.is) analytics with **non
 - 🔒 **Persistent device IDs** — Uses platform-specific identifiers (Android ID, `identifierForVendor`, etc.) persisted in secure storage (Keychain / EncryptedSharedPreferences) to survive app reinstalls.
 - 🔥 **Fire-and-forget tracking** — `trackScreen` and `trackEvent` never block the UI thread.
 - 🖥️ **Multi-platform** — Supports Android, iOS, macOS, and Windows.
+- 🛡️ **Privacy-first** — No cookies, no PII, no third-party data sharing. GDPR/CCPA friendly.
 - 🪵 **Optional debug logging** — Enable verbose logs during development with a single flag.
 - ⚠️ **Error monitoring** — Optional `onError` callback for production health checks.
 - 🌐 **Configurable User-Agent** — Override the default browser UA string if needed.
@@ -24,9 +47,16 @@ Add `umami_flutter` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
+  umami_flutter: ^0.1.2
+```
+
+Or install via Git:
+
+```yaml
+dependencies:
   umami_flutter:
     git:
-      url: https://github.com/hamzache497/umami_flutter.git
+      url: https://github.com/hamzache497/flutter_umami.git
 ```
 
 Then run:
@@ -34,6 +64,13 @@ Then run:
 ```bash
 flutter pub get
 ```
+
+### Prerequisites
+
+You need a running [Umami](https://umami.is) instance. You can:
+
+- **Self-host** using Docker, Vercel, Netlify, or Railway ([setup guide](https://umami.is/docs/install))
+- Use **Umami Cloud** at [cloud.umami.is](https://cloud.umami.is)
 
 ### Platform Setup
 
@@ -128,6 +165,24 @@ umami_flutter.dart          ← Public barrel export
 | [`flutter_secure_storage`](https://pub.dev/packages/flutter_secure_storage) | Persistent secure storage for device IDs |
 | [`uuid`](https://pub.dev/packages/uuid)                                     | UUID v4 fallback for device IDs          |
 
+## Related
+
+- [Umami](https://umami.is) — Open-source, privacy-focused web analytics
+- [Umami API Docs](https://umami.is/docs/api) — Sending events and API reference
+- [Flutter Analytics Packages](https://pub.dev/packages?q=analytics) — Other analytics options on pub.dev
+
+## Contributing
+
+Contributions are welcome! Whether it's a bug fix, new feature, documentation improvement, or just a suggestion — feel free to get involved.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m 'Add my feature'`)
+4. Push to the branch (`git push origin feature/my-feature`)
+5. Open a Pull Request
+
+If you find a bug or have a feature request, please [open an issue](https://github.com/hamzache497/flutter_umami/issues).
+
 ## License
 
-See [LICENSE](LICENSE) for details.
+MIT License — see [LICENSE](LICENSE) for details.
