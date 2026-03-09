@@ -1,3 +1,9 @@
+## 0.2.0
+
+- Added `recordFirstOpen` parameter to `init()` — automatically sends a `first_open` event when the app is opened for the first time on a device.
+- Added `DeviceIdService.isFirstLaunch` — indicates whether the current session is the device's first launch.
+- **Note:** On iOS/macOS, Keychain persists across reinstalls, and on Windows, secure storage also survives reinstalls, so `first_open` fires only once per device on these platforms. On Android, secure storage is cleared on uninstall, so reinstalling the app will trigger `first_open` again.
+
 ## 0.1.3
 
 - Widened dependency version constraints to reduce conflicts with host apps.

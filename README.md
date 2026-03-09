@@ -133,16 +133,19 @@ UmamiAnalytics.trackEvent('purchase', data: {'plan': 'pro', 'price': 9.99});
 
 ### `init()` Parameters
 
-| Parameter       | Required | Description                                    |
-| --------------- | -------- | ---------------------------------------------- |
-| `websiteId`     | ✅       | Website ID from your Umami dashboard.          |
-| `serverUrl`     | ✅       | Base URL of your Umami instance.               |
-| `hostname`      | ✅       | Logical hostname for this app.                 |
-| `enableLogging` | ❌       | Print debug logs to console. Default: `false`. |
-| `onError`       | ❌       | Callback invoked on init or send failures.     |
-| `userAgent`     | ❌       | Custom User-Agent string override.             |
+| Parameter         | Required | Description                                                       |
+| ----------------- | -------- | ----------------------------------------------------------------- |
+| `websiteId`       | ✅       | Website ID from your Umami dashboard.                             |
+| `serverUrl`       | ✅       | Base URL of your Umami instance.                                  |
+| `hostname`        | ✅       | Logical hostname for this app.                                    |
+| `enableLogging`   | ❌       | Print debug logs to console. Default: `false`.                    |
+| `onError`         | ❌       | Callback invoked on init or send failures.                        |
+| `userAgent`       | ❌       | Custom User-Agent string override.                                |
+| `recordFirstOpen` | ❌       | Auto-send a `first_open` event on first launch. Default: `false`. |
 
 > **Supported platforms:** Android, iOS, macOS, Windows. Flutter Web is **not** supported (the package uses `dart:io`).
+>
+> **Note on `recordFirstOpen`:** On iOS/macOS, Keychain persists across reinstalls, and on Windows, secure storage also survives reinstalls, so `first_open` fires only once per device on these platforms. On Android, secure storage is cleared on uninstall, so reinstalling the app **will trigger `first_open` again**.
 
 ## Architecture
 

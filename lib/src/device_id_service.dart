@@ -21,9 +21,16 @@ class DeviceIdService {
   /// In-memory cache to avoid repeated I/O.
   static String? _cachedId;
 
+  /// `true` if the device ID was freshly generated (not found in storage),
+  /// meaning this is the first time the app has been opened on this device.
+  static bool isFirstLaunch = false;
+
   DeviceIdService._();
 
   /// Returns a persistent device ID. Safe to call from any platform.
+  ///
+  /// After this call completes, [isFirstLaunch] indicates whether the ID
+  /// was freshly generated (`true`) or retrieved from storage (`false`).
   static Future<String> getId() async {
     if (_cachedId != null) return _cachedId!;
 
@@ -32,6 +39,7 @@ class DeviceIdService {
       final existing = await _storage.read(key: _storageKey);
       if (existing != null) {
         _cachedId = existing;
+        isFirstLaunch = false;
         return existing;
       }
     } catch (_) {
@@ -49,6 +57,7 @@ class DeviceIdService {
     }
 
     _cachedId = id;
+    isFirstLaunch = true;
     return id;
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:umami_flutter/src/device_id_service.dart';
 import 'package:umami_flutter/src/device_info.dart';
 import 'package:umami_flutter/src/umami_client.dart';
 
@@ -56,6 +57,9 @@ class UmamiAnalytics {
   /// - [userAgent]: Optional custom User-Agent string. If omitted, a
   ///   platform-appropriate browser User-Agent is used so Umami can
   ///   recognise the OS.
+  /// - [recordFirstOpen]: If `true`, automatically sends a `first_open` event
+  ///   when the app is opened for the first time on this device.
+  ///   Defaults to `false`.
   static void init({
     required String websiteId,
     required String serverUrl,
@@ -63,6 +67,7 @@ class UmamiAnalytics {
     bool enableLogging = false,
     void Function(Object error)? onError,
     String? userAgent,
+    bool recordFirstOpen = false,
   }) {
     // Guard: already initialised successfully — skip.
     if (_ready != null && _ready!.isCompleted) {
@@ -89,6 +94,7 @@ class UmamiAnalytics {
       serverUrl: serverUrl,
       hostname: hostname,
       userAgent: userAgent,
+      recordFirstOpen: recordFirstOpen,
     );
   }
 
@@ -97,6 +103,7 @@ class UmamiAnalytics {
     required String serverUrl,
     required String hostname,
     String? userAgent,
+    bool recordFirstOpen = false,
   }) async {
     try {
       final start = DateTime.now();
@@ -114,6 +121,12 @@ class UmamiAnalytics {
       );
 
       _ready!.complete(client);
+
+      // If first launch and tracking is enabled, fire the event
+      if (recordFirstOpen && DeviceIdService.isFirstLaunch) {
+        client.trackEvent('first_open');
+        _log?.call('[UmamiFlutter] Tracked first_open event');
+      }
 
       _log?.call(
         '[UmamiFlutter] Ready in '
